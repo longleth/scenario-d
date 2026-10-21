@@ -9,7 +9,10 @@ target/
 
 # Gradle
 .gradle/
-build/
+build/classes/
+build/generated/
+build/resources/
+build/tmp/
 
 # IntelliJ
 .idea/

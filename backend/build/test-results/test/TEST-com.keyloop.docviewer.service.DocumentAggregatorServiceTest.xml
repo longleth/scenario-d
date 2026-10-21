@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="DocumentAggregatorService" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-21T03:54:58" hostname="LAPTOP-FRQPB223" time="0.627">
+  <properties/>
+  <testcase name="should return empty document list when both APIs fail" classname="com.keyloop.docviewer.service.DocumentAggregatorServiceTest" time="0.568"/>
+  <testcase name="should sort aggregated documents by createdAt descending" classname="com.keyloop.docviewer.service.DocumentAggregatorServiceTest" time="0.006"/>
+  <testcase name="should return partial result with ERROR status when Service API fails" classname="com.keyloop.docviewer.service.DocumentAggregatorServiceTest" time="0.008"/>
+  <testcase name="should return partial result with ERROR status when Sales API fails" classname="com.keyloop.docviewer.service.DocumentAggregatorServiceTest" time="0.007"/>
+  <testcase name="should handle empty responses from both APIs gracefully" classname="com.keyloop.docviewer.service.DocumentAggregatorServiceTest" time="0.003"/>
+  <testcase name="should persist aggregated documents to the database" classname="com.keyloop.docviewer.service.DocumentAggregatorServiceTest" time="0.019"/>
+  <testcase name="should aggregate documents from both sources when both APIs succeed" classname="com.keyloop.docviewer.service.DocumentAggregatorServiceTest" time="0.007"/>
+  <system-out><![CDATA[2026-10-21 10:54:59,355 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregating documents for VIN=1HGCM82633A123456
+2026-10-21 10:54:59,361 [Test worker] [traceId=] WARN  c.k.d.s.DocumentAggregatorService - Sales API unavailable for VIN=1HGCM82633A123456 – Sales API down
+2026-10-21 10:54:59,361 [Test worker] [traceId=] WARN  c.k.d.s.DocumentAggregatorService - Service API unavailable for VIN=1HGCM82633A123456 – Service API down
+2026-10-21 10:54:59,362 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregation complete for VIN=1HGCM82633A123456: 0 document(s) total (sales=0, service=0)
+2026-10-21 10:54:59,400 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregating documents for VIN=1HGCM82633A123456
+2026-10-21 10:54:59,401 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregation complete for VIN=1HGCM82633A123456: 2 document(s) total (sales=1, service=1)
+2026-10-21 10:54:59,411 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregating documents for VIN=1HGCM82633A123456
+2026-10-21 10:54:59,412 [Test worker] [traceId=] WARN  c.k.d.s.DocumentAggregatorService - Service API unavailable for VIN=1HGCM82633A123456 – Service API down
+2026-10-21 10:54:59,412 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregation complete for VIN=1HGCM82633A123456: 1 document(s) total (sales=1, service=0)
+2026-10-21 10:54:59,419 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregating documents for VIN=1HGCM82633A123456
+2026-10-21 10:54:59,420 [Test worker] [traceId=] WARN  c.k.d.s.DocumentAggregatorService - Sales API unavailable for VIN=1HGCM82633A123456 – Connection timeout
+2026-10-21 10:54:59,421 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregation complete for VIN=1HGCM82633A123456: 1 document(s) total (sales=0, service=1)
+2026-10-21 10:54:59,425 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregating documents for VIN=1HGCM82633A123456
+2026-10-21 10:54:59,425 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregation complete for VIN=1HGCM82633A123456: 0 document(s) total (sales=0, service=0)
+2026-10-21 10:54:59,431 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregating documents for VIN=1HGCM82633A123456
+2026-10-21 10:54:59,432 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregation complete for VIN=1HGCM82633A123456: 2 document(s) total (sales=1, service=1)
+2026-10-21 10:54:59,449 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregating documents for VIN=1HGCM82633A123456
+2026-10-21 10:54:59,450 [Test worker] [traceId=] INFO  c.k.d.s.DocumentAggregatorService - Aggregation complete for VIN=1HGCM82633A123456: 2 document(s) total (sales=1, service=1)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
