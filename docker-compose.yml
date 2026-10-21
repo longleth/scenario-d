@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: docviewer-postgres
+    environment:
+      POSTGRES_DB: docviewer
+      POSTGRES_USER: docviewer
+      POSTGRES_PASSWORD: docviewer
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docviewer -d docviewer"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  wiremock:
+    image: wiremock/wiremock:3.5.4-alpine
+    container_name: docviewer-wiremock
+    ports:
+      - "8089:8080"
+    volumes:
+      - ./wiremock:/home/wiremock
+    command: ["--verbose", "--global-response-templating"]
+
+  app:
+    build:
+      context: ./backend
+    container_name: docviewer-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/docviewer
+      SPRING_DATASOURCE_USERNAME: docviewer
+      SPRING_DATASOURCE_PASSWORD: docviewer
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SALES_API_BASE_URL: http://wiremock:8080/sales
+      SERVICE_API_BASE_URL: http://wiremock:8080/service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      wiremock:
+        condition: service_started
+
+volumes:
+  postgres_data:
+

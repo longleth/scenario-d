@@ -1,0 +1,32 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/sales/api/documents",
+    "queryParameters": {
+      "vin": { "matches": ".+" }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "documents": [
+        {
+          "id": "sale-001",
+          "title": "Purchase Agreement",
+          "documentType": "CONTRACT",
+          "date": "2024-01-15T10:30:00Z",
+          "downloadUrl": "https://sales.example.com/docs/sale-001.pdf"
+        },
+        {
+          "id": "sale-002",
+          "title": "Vehicle Registration Certificate",
+          "documentType": "REGISTRATION",
+          "date": "2024-01-16T09:00:00Z",
+          "downloadUrl": "https://sales.example.com/docs/sale-002.pdf"
+        }
+      ]
+    }
+  }
+}
+

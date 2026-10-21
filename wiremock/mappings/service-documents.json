@@ -1,0 +1,39 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/service/api/documents",
+    "queryParameters": {
+      "vin": { "matches": ".+" }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "records": [
+        {
+          "recordId": "svc-001",
+          "description": "Oil Change Service",
+          "category": "MAINTENANCE",
+          "serviceDate": "2024-06-20T09:00:00Z",
+          "documentUrl": "https://service.example.com/docs/svc-001.pdf"
+        },
+        {
+          "recordId": "svc-002",
+          "description": "Tire Rotation",
+          "category": "MAINTENANCE",
+          "serviceDate": "2024-09-10T14:00:00Z",
+          "documentUrl": "https://service.example.com/docs/svc-002.pdf"
+        },
+        {
+          "recordId": "svc-003",
+          "description": "Annual Safety Inspection",
+          "category": "INSPECTION",
+          "serviceDate": "2024-10-01T11:00:00Z",
+          "documentUrl": "https://service.example.com/docs/svc-003.pdf"
+        }
+      ]
+    }
+  }
+}
+

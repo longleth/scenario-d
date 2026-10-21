@@ -1,0 +1,192 @@
+openapi: "3.0.3"
+info:
+  title: Unified Document Viewer API
+  description: |
+    Aggregates vehicle-related documents from the **Sales System** and the **Service System**
+    into a single unified view, identified by VIN.
+
+    ## Partial Failure Behaviour
+    If one external system is unavailable, the API still returns HTTP 200 with the documents
+    available from the other system. The `sources` field indicates the per-system status.
+  version: "1.0.0"
+  contact:
+    name: Keyloop
+    url: https://keyloop.com
+
+servers:
+  - url: http://localhost:8080
+    description: Local / Docker Compose
+  - url: https://api.docviewer.keyloop.com
+    description: Production (AWS ALB)
+
+tags:
+  - name: Documents
+    description: Unified vehicle document search
+
+paths:
+  /api/v1/documents:
+    get:
+      tags: [Documents]
+      summary: Get all documents for a vehicle by VIN
+      description: |
+        Queries the Sales System and the Service System **in parallel** and returns
+        a consolidated, source-labelled document list.
+
+        Returns HTTP 200 even if one system fails (partial result).
+      operationId: getDocumentsByVin
+      parameters:
+        - name: vin
+          in: query
+          required: true
+          description: 17-character ISO 3779 Vehicle Identification Number
+          schema:
+            type: string
+            pattern: '^[A-HJ-NPR-Z0-9]{17}$'
+            example: 1HGCM82633A123456
+      responses:
+        "200":
+          description: Successful aggregation (may be partial if one system is unavailable)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentsResponse'
+              examples:
+                full_success:
+                  summary: Both systems responded
+                  value:
+                    vin: "1HGCM82633A123456"
+                    totalCount: 5
+                    documents:
+                      - id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        title: "Purchase Agreement"
+                        type: "CONTRACT"
+                        source: "SALES"
+                        createdAt: "2024-01-15T10:30:00Z"
+                        url: "https://sales.example.com/docs/sale-001.pdf"
+                      - id: "7cb94e81-1234-4321-a1b2-3c4d5e6f7a8b"
+                        title: "Oil Change Service"
+                        type: "MAINTENANCE"
+                        source: "SERVICE"
+                        createdAt: "2024-06-20T09:00:00Z"
+                        url: "https://service.example.com/docs/svc-001.pdf"
+                    sources:
+                      SALES:   { status: "OK", count: 2 }
+                      SERVICE: { status: "OK", count: 3 }
+                partial_failure:
+                  summary: Service System unavailable
+                  value:
+                    vin: "1HGCM82633A123456"
+                    totalCount: 2
+                    documents:
+                      - id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        title: "Purchase Agreement"
+                        type: "CONTRACT"
+                        source: "SALES"
+                        createdAt: "2024-01-15T10:30:00Z"
+                        url: "https://sales.example.com/docs/sale-001.pdf"
+                    sources:
+                      SALES:   { status: "OK",    count: 2 }
+                      SERVICE: { status: "ERROR",  count: 0, errorMessage: "Connection timeout" }
+        "400":
+          description: Invalid or missing VIN
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              example:
+                type: "about:blank"
+                title: "Validation Error"
+                status: 400
+                detail: "getDocumentsByVin.vin: VIN must be exactly 17 characters (alphanumeric, excluding I, O, Q)"
+        "500":
+          description: Unexpected server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+
+  /actuator/health:
+    get:
+      tags: [Actuator]
+      summary: Health check
+      operationId: health
+      responses:
+        "200":
+          description: Application is healthy
+
+components:
+  schemas:
+    DocumentsResponse:
+      type: object
+      required: [vin, totalCount, documents, sources]
+      properties:
+        vin:
+          type: string
+          example: "1HGCM82633A123456"
+        totalCount:
+          type: integer
+          example: 5
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        sources:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/SourceStatus'
+          example:
+            SALES:   { status: "OK", count: 2 }
+            SERVICE: { status: "OK", count: 3 }
+
+    Document:
+      type: object
+      required: [id, source]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: "Purchase Agreement"
+        type:
+          type: string
+          description: Document category from the source system
+          example: "CONTRACT"
+        source:
+          type: string
+          enum: [SALES, SERVICE]
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        url:
+          type: string
+          format: uri
+          nullable: true
+
+    SourceStatus:
+      type: object
+      required: [status, count]
+      properties:
+        status:
+          type: string
+          enum: [OK, ERROR]
+        count:
+          type: integer
+        errorMessage:
+          type: string
+          nullable: true
+          description: Only present when status is ERROR
+
+    ProblemDetail:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+
